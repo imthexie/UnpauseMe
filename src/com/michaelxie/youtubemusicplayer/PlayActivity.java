@@ -20,6 +20,13 @@ import com.michaelxie.youtubemusicplayer.R;
 
 
 
+
+
+
+
+
+
+
 import android.text.format.Time;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -27,6 +34,8 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 //import android.app.Activity;
 import android.content.Context;
+import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Bundle;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
@@ -34,22 +43,60 @@ import android.webkit.WebSettings.PluginState;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.MediaController.MediaPlayerControl;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+class VideoLoader implements Runnable {
+	int width, height; 
+	String itemName;
+	WebView wv;
+	
+	public VideoLoader(WebView view, int w1, int h1, String item) {
+		wv = view;
+		width = w1;
+		height = h1;
+		itemName = item;
+	}
+	public void loadVideo() {
+		  try {
+		        wv.loadDataWithBaseURL("",
+		        "<html><body><iframe class=\"youtube-player\" type=\"text/html5\" width=\""
+		        + (width - 20)
+		        + "\" height=\""
+		        + height
+		        + "\" src=\""
+		        + itemName
+		        + "\" frameborder=\"0\"\"controls onclick=\"this.play()\">\n</iframe></body></html>",
+		                                "text/html", "UTF-8", "");
+		    } catch (Exception e) {
+		        e.printStackTrace();
+		    }
+	  }   
 
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		loadVideo();
+	}
+	
+}
 
 public class PlayActivity extends Activity{//extends YouTubeFailureRecoveryActivity implements View.OnClickListener{
 	private String id;
 	private String embed_url = "http://www.youtube.com/embed/";
 	private WebView wv;
 	private VideoView video;
+	Thread videoThread;
+	private myWebChromeClient chromeClient = new myWebChromeClient();
   @SuppressLint("SetJavaScriptEnabled")
 @SuppressWarnings("deprecation")
 @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.playerview);
+    
+    
     wv = (WebView) findViewById(R.id.webview);
     if (savedInstanceState == null) {
         video = null;
@@ -65,10 +112,22 @@ public class PlayActivity extends Activity{//extends YouTubeFailureRecoveryActiv
     wv.getSettings().setPluginState(WebSettings.PluginState.ON);
     wv.setHorizontalScrollBarEnabled(false);
     wv.setVerticalScrollBarEnabled(false);
-    loadVideo(w1, h1, item);
+    VideoLoader vl = new VideoLoader(wv, w1, h1, item);
+    if(videoThread != null) {
+    		videoThread.stop();
+    		try {
+				videoThread.join();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    }
+    
+    videoThread = new Thread(vl);
+    videoThread.start();
   }
   
-  private WebChromeClient chromeClient = new WebChromeClient() {
+  private class myWebChromeClient extends WebChromeClient implements OnCompletionListener {
 
 	    @Override
 	    public void onShowCustomView(View view, CustomViewCallback callback) {
@@ -79,27 +138,25 @@ public class PlayActivity extends Activity{//extends YouTubeFailureRecoveryActiv
 	                video = (VideoView) frame.getFocusedChild();
 	                frame.removeView(video);
 	                video.start();
+	                tToast("Got the video object");
 	            }
 	        }
 	    }
+
+		@Override
+		public void onCompletion(MediaPlayer mp) {
+			// TODO Auto-generated method stub
+			videoThread.stop();
+			try {
+				videoThread.join();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	};
 	
-  public void loadVideo(int w1, int h1, String item) {
-	  try {
-	        wv.loadDataWithBaseURL("",
-	        "<html><body><iframe class=\"youtube-player\" type=\"text/html5\" width=\""
-	        + (w1 - 20)
-	        + "\" height=\""
-	        + h1
-	        + "\" src=\""
-	        + item
-	        + "\" frameborder=\"0\"\"controls onclick=\"this.play()\">\n</iframe></body></html>",
-	                                "text/html", "UTF-8", "");
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
-  }   
-
+ 
   /*@Override
   public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer player,
       boolean wasRestored) {
