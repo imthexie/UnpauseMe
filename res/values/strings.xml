@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Youtube Music Player</string>
+    <string name="action_settings">Settings</string>
+    <string name="error_player">error</string>
+    <string name="search_hint">Search YouTube</string>
+    <string name="title_activity_searchable">Search</string>
+    <string name="helpful1">Use your Power Button to start playing music!</string>
+
+
+</resources>
