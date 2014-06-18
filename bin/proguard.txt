@@ -1,3 +1,6 @@
+# view res/layout/playerview.xml #generated:23
+-keep class com.google.android.youtube.player.YouTubePlayerView { <init>(...); }
+
 # view AndroidManifest.xml #generated:21
 -keep class com.michaelxie.youtubemusicplayer.MainActivity { <init>(...); }
 

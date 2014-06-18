@@ -16,16 +16,17 @@
 
 package com.michaelxie.youtubemusicplayer;
 
-import com.michaelxie.youtubemusicplayer.R;
+import com.michaelxie.youtubemusicplayer.*;
+import com.michaelxie.youtubemusicplayer.PlayActivity.MyPlaybackEventListener;
+import com.google.android.youtube.player.YouTubePlayer;
+import com.google.android.youtube.player.YouTubePlayer.PlaybackEventListener;
+import com.google.android.youtube.player.YouTubePlayer.PlayerStyle;
+import com.google.android.youtube.player.YouTubePlayer.Provider;
+import com.google.android.youtube.player.YouTubePlayerView;
 
 
 
-
-
-
-
-
-
+import com.google.api.services.youtube.model.VideoPlayer;
 
 import android.text.format.Time;
 import android.util.DisplayMetrics;
@@ -48,140 +49,87 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 class VideoLoader implements Runnable {
-	int width, height; 
-	String itemName;
-	WebView wv;
-	
-	public VideoLoader(WebView view, int w1, int h1, String item) {
-		wv = view;
-		width = w1;
-		height = h1;
-		itemName = item;
-	}
-	public void loadVideo() {
-		  try {
-		        wv.loadDataWithBaseURL("",
-		        "<html><body><iframe class=\"youtube-player\" type=\"text/html5\" width=\""
-		        + (width - 20)
-		        + "\" height=\""
-		        + height
-		        + "\" src=\""
-		        + itemName
-		        + "\" frameborder=\"0\"\"controls onclick=\"this.play()\">\n</iframe></body></html>",
-		                                "text/html", "UTF-8", "");
-		    } catch (Exception e) {
-		        e.printStackTrace();
-		    }
-	  }   
-
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
-		loadVideo();
+	YouTubePlayer player;
+	String id;
+	boolean restored;
+	MyPlaybackEventListener playbackEventListener;
+	public VideoLoader(YouTubePlayer p, String id, boolean restored, MyPlaybackEventListener listener) {
+		player = p;
+		this.id = id;
+		this.restored = restored;
+		playbackEventListener = listener;
 	}
 	
-}
-
-public class PlayActivity extends Activity{//extends YouTubeFailureRecoveryActivity implements View.OnClickListener{
-	private String id;
-	private String embed_url = "http://www.youtube.com/embed/";
-	private WebView wv;
-	private VideoView video;
-	Thread videoThread;
-	private myWebChromeClient chromeClient = new myWebChromeClient();
-  @SuppressLint("SetJavaScriptEnabled")
-@SuppressWarnings("deprecation")
-@Override
-  public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.playerview);
-    
-    
-    wv = (WebView) findViewById(R.id.webview);
-    if (savedInstanceState == null) {
-        video = null;
-    	wv.loadUrl("about:blank"); //NOT REALLY NEEDED
-    	id = getIntent().getExtras().getString("id");
-    }
-    String item = embed_url + id;
-    DisplayMetrics metrics = getResources().getDisplayMetrics();
-    int w1 = (int) (metrics.widthPixels / metrics.density), h1 = w1 * 3 / 5;
-    
-    wv.setWebChromeClient(chromeClient);
-    wv.getSettings().setJavaScriptEnabled(true);
-    wv.getSettings().setPluginState(WebSettings.PluginState.ON);
-    wv.setHorizontalScrollBarEnabled(false);
-    wv.setVerticalScrollBarEnabled(false);
-    VideoLoader vl = new VideoLoader(wv, w1, h1, item);
-    if(videoThread != null) {
-    		videoThread.stop();
-    		try {
-				videoThread.join();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-    }
-    
-    videoThread = new Thread(vl);
-    videoThread.start();
-  }
-  
-  private class myWebChromeClient extends WebChromeClient implements OnCompletionListener {
-
-	    @Override
-	    public void onShowCustomView(View view, CustomViewCallback callback) {
-	        super.onShowCustomView(view, callback);
-	        if (view instanceof FrameLayout) {
-	            FrameLayout frame = (FrameLayout) view;
-	            if (frame.getFocusedChild() instanceof VideoView) {
-	                video = (VideoView) frame.getFocusedChild();
-	                frame.removeView(video);
-	                video.start();
-	                tToast("Got the video object");
-	            }
-	        }
-	    }
-
-		@Override
-		public void onCompletion(MediaPlayer mp) {
-			// TODO Auto-generated method stub
-			videoThread.stop();
+	/*void listenForEvents() {
+		while(true) {
 			try {
-				videoThread.join();
+				wait();
+				player.play();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-	};
+	}*/
+	
+	void setRestored(boolean status) {
+		restored = status;
+	}
+	@Override
+	public void run() {
+	    if(!restored) player.cueVideo(id);
+	    else player.play();
+	    //listenForEvents();
+	}
+	
+}
+
+public class PlayActivity extends YouTubeFailureRecoveryActivity implements View.OnClickListener{
+	private String id;
+	public YouTubePlayer player;
+	boolean restored;
+	private Button playButton; 
+	private Button pauseButton; 
+	private MyPlaybackEventListener playbackEventListener;
+
+	Thread th;
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.playerview);
+    playButton = (Button)findViewById(R.id.play_button);
+	pauseButton = (Button)findViewById(R.id.pause_button);
+	playButton.setOnClickListener(this);
+	pauseButton.setOnClickListener(this);
+    if (savedInstanceState == null) {
+    	id = getIntent().getExtras().getString("id");
+    	if(th != null) {
+    		th.stop();
+    		try {
+				th.join();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
+    }
+    YouTubePlayerView youTubeView = (YouTubePlayerView) findViewById(R.id.youtube_view);
+    
+    youTubeView.initialize(DeveloperKey.DEVELOPER_KEY, this);
+  }
+  
 	
  
-  /*@Override
-  public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer player,
-      boolean wasRestored) {
-	  this.player = player;
-	  player.setPlayerStyle(PlayerStyle.DEFAULT);
-	  player.setPlaybackEventListener(playbackEventListener);
-	  if (!wasRestored) {
-	    player.cueVideo(id);
-	  }
-  }
-
-  @Override
-  protected YouTubePlayer.Provider getYouTubePlayerProvider() {
-    return (YouTubePlayerView) findViewById(R.id.youtube_view);
-  }
-
+ 
 @Override
 	public void onClick(View v) {
 	    if (v == playButton) {
-	      player.play();
+	      //player.play();
+	    	//th.run();
 	    } else if (v == pauseButton) {
-	      player.pause();
-	      playbackEventListener.isPlaying = false;
+	      //player.pause();
+	      //playbackEventListener.isPlaying = false;
 	    }
-	  }*/
+	}
 
 	
 	/*@Override
@@ -198,54 +146,68 @@ public class PlayActivity extends Activity{//extends YouTubeFailureRecoveryActiv
 		if(playbackEventListener.isPlaying) 
 			player.play();
 		tToast("" + playbackEventListener.currMillis);
-	}*/
-	
-	/*@Override
+	}@Override
 	public void onResume() {
 		super.onResume();
 		if(player.getCurrentTimeMillis() != currMillis) 
 			player.seekToMillis(currMillis);
 		if(isPlaying) player.play();
 		tToast("onResume");
-	}
+	}*/
+	
+	
 	
 	@Override
 	public void onPause() {
-		playbackEventListener.currMillis = player.getCurrentTimeMillis();
-		playbackEventListener.updateTime.setToNow();
 		super.onPause();
-		//tToast("onPause");
-		if(playbackEventListener.isPlaying || playbackEventListener.currMillis == 0) 
-			player.play();
+		th.run();
+		tToast("onPause");
 	}
 	
 	@Override
 	public void onStop() {
-		playbackEventListener.currMillis = player.getCurrentTimeMillis();
 		super.onStop();
-		//tToast("onStop");
-		//if(isPlaying || currMillis == 0) 
-		if(playbackEventListener.isPlaying || playbackEventListener.currMillis == 0) 
-			player.play();
+		th.run();
+		tToast("onStop");
 	}
 	
-	
-	public void onDestroy() {
-		super.onStop();
-		//tToast("onDestroy");
-		player.play();
-	}*/
   	
+private void tToast(String s) {
+    Context context = getApplicationContext();
+    int duration = Toast.LENGTH_SHORT;
+    Toast toast = Toast.makeText(context, s, duration);
+    toast.show();
+}
 
-  	
-	private void tToast(String s) {
-	    Context context = getApplicationContext();
-	    int duration = Toast.LENGTH_SHORT;
-	    Toast toast = Toast.makeText(context, s, duration);
-	    toast.show();
+
+
+
+	@Override
+	public void onInitializationSuccess(Provider arg0, YouTubePlayer arg1,
+			boolean arg2) {
+		// TODO Auto-generated method stub
+		player = arg1;
+		restored = arg2;
+		playbackEventListener = new MyPlaybackEventListener();
+		player.setPlayerStyle(PlayerStyle.DEFAULT);
+	    player.setPlaybackEventListener(playbackEventListener);
+		VideoLoader vl = new VideoLoader(player, id, restored, playbackEventListener);
+		th = new Thread(vl);
+		th.setPriority(th.MAX_PRIORITY);
+		th.start();
+		arg1 = null;
+		
+	}
+
+
+
+
+	@Override
+	protected Provider getYouTubePlayerProvider() {
+		return (YouTubePlayerView) findViewById(R.id.youtube_view);
 	}
 	
-	/*private final class MyPlaybackEventListener implements PlaybackEventListener {
+	class MyPlaybackEventListener implements PlaybackEventListener {
 	    public boolean isPlaying = false;
 	    public int currMillis = 0;
 	    public Time updateTime = new Time();
@@ -287,8 +249,10 @@ public class PlayActivity extends Activity{//extends YouTubeFailureRecoveryActiv
 	    		updateTime = now;
 	    		return (int) (1000 * updateTime.toMillis(false) - 1000 * now.toMillis(false));
 	    }
+	    
 	  }
-	*/
+	
 }
+
 
 
