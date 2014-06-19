@@ -4,9 +4,9 @@
 # view AndroidManifest.xml #generated:31
 -keep class com.michaelxie.youtubemusicplayer.PlayActivity { <init>(...); }
 
-# view AndroidManifest.xml #generated:35
+# view AndroidManifest.xml #generated:36
 -keep class com.michaelxie.youtubemusicplayer.SearchableActivity { <init>(...); }
 
-# view AndroidManifest.xml #generated:33
+# view AndroidManifest.xml #generated:34
 -keep class com.michaelxie.youtubemusicplayer.YouTubeFailureRecoveryActivity { <init>(...); }
 

@@ -28,7 +28,8 @@
             </intent-filter>
             
         </activity>
-        <activity android:name="com.michaelxie.youtubemusicplayer.PlayActivity" >
+        <activity android:name="com.michaelxie.youtubemusicplayer.PlayActivity" 
+            android:launchMode="singleInstance">
         </activity>
         <activity android:name="com.michaelxie.youtubemusicplayer.YouTubeFailureRecoveryActivity" >
         </activity>

@@ -28,6 +28,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -55,11 +57,8 @@ import com.google.api.services.youtube.model.SearchResult;
 //import com.google.api.services.youtube.model.VideoSnippet;
 
 
-public class SearchableActivity extends ListActivity implements OnItemClickListener{
-	//public static final String ACCOUNT_KEY = "accountName";
-	//public static final String MESSAGE_KEY = "message";
-	//public static final String YOUTUBE_ID = "youtubeId";
-	//public static final String YOUTUBE_WATCH_URL_PREFIX = "http://www.youtube.com/watch?v=";
+public class SearchableActivity extends ListActivity implements OnItemClickListener, OnScrollListener{
+
 	private static final String TAG = "SEARCHABLE";
 	
 	final HttpTransport transport = AndroidHttp.newCompatibleTransport();
@@ -67,37 +66,39 @@ public class SearchableActivity extends ListActivity implements OnItemClickListe
 	//public String URL = "https://www.googleapis.com/youtube/v3/videos?search?&key=AIzaSyAo02NXZkIw_veXM_qT73A1s5so5I0UOKY&part=snippet,statistics&type=video&q="; 
 	ListView listView;
 	List<videoResultItem> resultList;
-	
+	String query;
+	int numResults;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_searchable); 
 		setupActionBar(); // Show the Up button in the action bar.
 		resultList = new ArrayList<videoResultItem>();
+		numResults = 25;
 		handleIntent(getIntent());
-		
 	}
 	
 	@Override
 	protected void onNewIntent(Intent intent) {
+		numResults = 25;
 	    setIntent(intent);
 	    handleIntent(intent);
 	}
 
 	private void handleIntent(Intent intent) {
 	    if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-	      String query = intent.getStringExtra(SearchManager.QUERY);
-	      search(query);
-	    }
-	    
+	      query = intent.getStringExtra(SearchManager.QUERY);
+	      search(query, numResults);
+	    }   
 	}
 	
 	@Override
 	  public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 	    videoResultItem clickedItem = (videoResultItem) resultList.get(position);
-	    Intent intent = new Intent();
-		intent.setComponent(new ComponentName(getPackageName(), "com.michaelxie.youtubemusicplayer.PlayActivity"));
+	    Intent intent = new Intent(this, PlayActivity.class);
 		try {
+			intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+			intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 			intent.putExtra("id", clickedItem.getId());
 			startActivity(intent);		
 		}
@@ -110,10 +111,12 @@ public class SearchableActivity extends ListActivity implements OnItemClickListe
 	public class searchTask extends AsyncTask<String, Void, List<videoResultItem>> {
 		List<videoResultItem> tempList;
 		SearchableActivity activity;
-		public searchTask(SearchableActivity activity) {
+		int numResults;
+		public searchTask(SearchableActivity activity, int numResults) {
 			super();
 			tempList = new ArrayList<videoResultItem>();
 			this.activity = activity;
+			this.numResults = numResults;
 		}
 		protected List<videoResultItem> doInBackground(String... query) {
 			HttpRequestInitializer initializer = new HttpRequestInitializer() {
@@ -125,7 +128,7 @@ public class SearchableActivity extends ListActivity implements OnItemClickListe
 		        searchRequest.setKey(DeveloperKey.DEVELOPER_KEY);
 		        searchRequest.setQ(query[0]);
 		        searchRequest.setType("video");
-		        searchRequest.setMaxResults((long) 25);
+		        searchRequest.setMaxResults((long) numResults);
 		        searchRequest.setFields("items(id/kind,id/videoId,snippet/title,snippet/thumbnails/default/url)");
 		        SearchListResponse searchResponse = searchRequest.execute();
 		        List<SearchResult> list = searchResponse.getItems();
@@ -154,60 +157,36 @@ public class SearchableActivity extends ListActivity implements OnItemClickListe
 			 DemoArrayAdapter adapter = new DemoArrayAdapter(activity, R.layout.list_item, result);
 			 listView.setAdapter(adapter);
 			 listView.setOnItemClickListener(activity);
+			 listView.setOnScrollListener(activity);
 			 activity.resultList = result;
 		}
 		
 	}
 	
-	private void search(final String query) {
-		searchTask task = new searchTask(this);
+	private void search(final String query, int numResults) {
+		searchTask task = new searchTask(this, numResults);
 		task.execute(query);
-		
-		/*new AsyncTask<Void, Void, List<videoResultItem>>() {
-			List<videoResultItem> tempList = new ArrayList<videoResultItem>();
-			@Override
-			protected List<videoResultItem> doInBackground(Void... voids) {
-				HttpRequestInitializer initializer = new HttpRequestInitializer() {
-																		public void initialize(HttpRequest request) throws IOException {}};		            
-				YouTube youtube = new YouTube.Builder(transport, jsonFactory, initializer).setApplicationName("YoutubeMusicPlayer").build();
-				try {
-					// Define the API request for retrieving search results.
-			        YouTube.Search.List searchRequest = youtube.search().list("id,snippet");
-			        searchRequest.setKey(DeveloperKey.DEVELOPER_KEY);
-			        searchRequest.setQ(query);
-			        searchRequest.setType("video");
-			        searchRequest.setMaxResults((long) 25);
-			        searchRequest.setFields("items(id/kind,id/videoId,snippet/title,snippet/thumbnails/default/url)");
-			        SearchListResponse searchResponse = searchRequest.execute();
-			        List<SearchResult> list = searchResponse.getItems();
-			        for(int i = 0; i < list.size(); i++) {
-			        	JSONObject resultSnippet = new JSONObject(list.get(i).getSnippet());
-			        	try {
-			        		videoResultItem item = new videoResultItem(resultSnippet.getString("title"), list.get(i).getId().getVideoId());
-			        		tempList.add(item);	
-			        		//System.out.println(item.getTitle());
-			        	} catch(JSONException e) {
-			        		System.err.println("JSONException");
-			        	}
-			        }
-			        
-				} catch (GoogleJsonResponseException e) {
-			        System.err.println("Oops! Service error: " + e.getDetails().getCode() + " : "
-			                + e.getDetails().getMessage());
-			    } catch (IOException e) {
-			    	System.err.println("Oops! IO error: " + e.getCause() + " : " + e.getMessage());				
-			    } 
-				return tempList;
-			}
-			@Override
-			protected void onPostExecute(List<videoResultItem> list) {
-			   
-			}
-			
-			
-			
-		}.execute((Void) null);*/
 	}
+	
+	@Override
+	public void onScroll(AbsListView lw, final int firstVisibleItem,
+	                 final int visibleItemCount, final int totalItemCount) {
+
+	    switch(lw.getId()) {
+	        case android.R.id.list:     
+
+	            // Make your calculation stuff here. You have all your
+	            // needed info from the parameters of this function.
+
+	            // Sample calculation to determine if the last 
+	            // item is fully visible.
+	             final int lastItem = firstVisibleItem + visibleItemCount;
+	           if(lastItem == totalItemCount && totalItemCount == numResults && numResults < 50) {
+	              search(query, 50);
+	           }
+	    }
+	}
+
 	/**
 	 * Set up the {@link android.app.ActionBar}.
 	 */
@@ -281,24 +260,10 @@ public class SearchableActivity extends ListActivity implements OnItemClickListe
 
 	}
 
-	/*class SearchWebTask extends AsyncTask<String, Void, String> {
-		@Override			
-		protected String doInBackground(String... query) {	
-			HttpClient httpclient = new DefaultHttpClient();  
-			HttpGet request = new HttpGet(URL + query); 
-			String result = "";
-			ResponseHandler<String> handler = new BasicResponseHandler();  
-			try {  
-				result = (String)httpclient.execute(request, handler);  
-			} catch (ClientProtocolException e) {  
-				e.printStackTrace();  
-			} catch (IOException e) {  
-				e.printStackTrace();  
-			}
-			httpclient.getConnectionManager().shutdown(); 
-			Log.i(TAG, result); 
-			return null;
-		}  
-			
-	}*/
+	@Override
+	public void onScrollStateChanged(AbsListView arg0, int arg1) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

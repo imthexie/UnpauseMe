@@ -27,13 +27,17 @@ import com.michaelxie.youtubemusicplayer.R;
 
 
 
+
+
 import android.text.format.Time;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 //import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Bundle;
@@ -90,41 +94,58 @@ public class PlayActivity extends Activity{//extends YouTubeFailureRecoveryActiv
 	Thread videoThread;
 	private myWebChromeClient chromeClient = new myWebChromeClient();
   @SuppressLint("SetJavaScriptEnabled")
-@SuppressWarnings("deprecation")
 @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.playerview);
-    
-    
+ 
     wv = (WebView) findViewById(R.id.webview);
-    if (savedInstanceState == null) {
-        video = null;
-    	wv.loadUrl("about:blank"); //NOT REALLY NEEDED
-    	id = getIntent().getExtras().getString("id");
-    }
-    String item = embed_url + id;
-    DisplayMetrics metrics = getResources().getDisplayMetrics();
-    int w1 = (int) (metrics.widthPixels / metrics.density), h1 = w1 * 3 / 5;
-    
-    wv.setWebChromeClient(chromeClient);
-    wv.getSettings().setJavaScriptEnabled(true);
-    wv.getSettings().setPluginState(WebSettings.PluginState.ON);
-    wv.setHorizontalScrollBarEnabled(false);
-    wv.setVerticalScrollBarEnabled(false);
-    VideoLoader vl = new VideoLoader(wv, w1, h1, item);
-    if(videoThread != null) {
-    		videoThread.stop();
-    		try {
+  
+	String oldId = id;
+	 if(oldId != null) Log.i("PLAYACTIVITYONCREATE", oldId);
+	id = getIntent().getExtras().getString("id");
+	  Log.i("PLAYACTIVITYONCREATE", id);
+	if( oldId == null || (!oldId.equals("curr") && !oldId.equals(id))) {	
+		  setUpVideo();
+	}       
+	
+	
+  }
+  
+  @Override
+  protected void onNewIntent(Intent intent) {
+	  String oldId = id;
+	 Log.i("PLAYACTIVITY", oldId);
+	  id = intent.getExtras().getString("id");
+	  if(oldId == null || (!oldId.equals("curr") && !oldId.equals(id))) {	
+		  setUpVideo();
+	  } 
+		
+  }
+  
+  private void setUpVideo() {
+	  String item = embed_url + id;
+	    DisplayMetrics metrics = getResources().getDisplayMetrics();
+	    int w1 = (int) (metrics.widthPixels / metrics.density), h1 = w1 * 3 / 5;
+	    
+	    wv.setWebChromeClient(chromeClient);
+	    wv.getSettings().setJavaScriptEnabled(true);
+	    wv.getSettings().setPluginState(WebSettings.PluginState.ON);
+	    wv.setHorizontalScrollBarEnabled(false);
+	    wv.setVerticalScrollBarEnabled(false);
+	    VideoLoader vl = new VideoLoader(wv, w1, h1, item);
+	    if(videoThread != null) {
+	    	videoThread.stop();
+	    	try {
 				videoThread.join();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-    }
-    
-    videoThread = new Thread(vl);
-    videoThread.start();
+	    }
+	    
+	    videoThread = new Thread(vl);
+	    videoThread.start();
   }
   
   private class myWebChromeClient extends WebChromeClient implements OnCompletionListener {
@@ -156,7 +177,18 @@ public class PlayActivity extends Activity{//extends YouTubeFailureRecoveryActiv
 		}
 	};
 	
- 
+	@Override
+	public void onResume() {
+		super.onResume();
+		
+	}
+	
+	@Override
+	public void onPause() {
+		this.moveTaskToBack(true);
+		super.onPause();
+	}
+	
   /*@Override
   public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer player,
       boolean wasRestored) {
