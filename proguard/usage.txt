@@ -2667,8 +2667,6 @@ com.michaelxie.youtubemusicplayer.BuildConfig
 com.michaelxie.youtubemusicplayer.DeveloperKey
 com.michaelxie.youtubemusicplayer.FragmentActivity
 com.michaelxie.youtubemusicplayer.ListViewItem
-com.michaelxie.youtubemusicplayer.PlayActivity:
-    185:189:private void tToast(java.lang.String)
 com.michaelxie.youtubemusicplayer.R
 com.michaelxie.youtubemusicplayer.R$attr
 com.michaelxie.youtubemusicplayer.R$dimen

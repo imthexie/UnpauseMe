@@ -3659,31 +3659,42 @@ com.michaelxie.youtubemusicplayer.MainActivity -> com.michaelxie.youtubemusicpla
     boolean onCreateOptionsMenu(android.view.Menu) -> onCreateOptionsMenu
     boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
 com.michaelxie.youtubemusicplayer.PlayActivity -> com.michaelxie.youtubemusicplayer.PlayActivity:
-    java.lang.String id -> a
-    java.lang.String embed_url -> b
-    android.webkit.WebView wv -> c
-    android.widget.VideoView video -> d
-    android.webkit.WebChromeClient chromeClient -> e
+    java.lang.String id -> b
+    java.lang.String embed_url -> c
+    android.webkit.WebView wv -> d
+    android.widget.VideoView video -> e
+    java.lang.Thread videoThread -> a
+    com.michaelxie.youtubemusicplayer.PlayActivity$myWebChromeClient chromeClient -> f
     void onCreate(android.os.Bundle) -> onCreate
-    void loadVideo(int,int,java.lang.String) -> a
+    void onNewIntent(android.content.Intent) -> onNewIntent
+    void setUpVideo() -> a
+    void onResume() -> onResume
+    void onPause() -> onPause
+    void tToast(java.lang.String) -> a
     void access$0(com.michaelxie.youtubemusicplayer.PlayActivity,android.widget.VideoView) -> a
     android.widget.VideoView access$1(com.michaelxie.youtubemusicplayer.PlayActivity) -> a
-com.michaelxie.youtubemusicplayer.PlayActivity$1 -> com.michaelxie.youtubemusicplayer.a:
+    void access$2(com.michaelxie.youtubemusicplayer.PlayActivity,java.lang.String) -> a
+com.michaelxie.youtubemusicplayer.PlayActivity$myWebChromeClient -> com.michaelxie.youtubemusicplayer.a:
     com.michaelxie.youtubemusicplayer.PlayActivity this$0 -> a
     void onShowCustomView(android.view.View,android.webkit.WebChromeClient$CustomViewCallback) -> onShowCustomView
+    void onCompletion(android.media.MediaPlayer) -> onCompletion
 com.michaelxie.youtubemusicplayer.SearchableActivity -> com.michaelxie.youtubemusicplayer.SearchableActivity:
     com.google.api.client.http.HttpTransport transport -> a
     com.google.api.client.json.JsonFactory jsonFactory -> b
     android.widget.ListView listView -> c
     java.util.List resultList -> d
+    java.lang.String query -> e
+    int numResults -> f
     void onCreate(android.os.Bundle) -> onCreate
     void onNewIntent(android.content.Intent) -> onNewIntent
     void handleIntent(android.content.Intent) -> a
     void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
-    void search(java.lang.String) -> a
+    void search(java.lang.String,int) -> a
+    void onScroll(android.widget.AbsListView,int,int,int) -> onScroll
     void setupActionBar() -> a
     boolean onCreateOptionsMenu(android.view.Menu) -> onCreateOptionsMenu
     boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
+    void onScrollStateChanged(android.widget.AbsListView,int) -> onScrollStateChanged
 com.michaelxie.youtubemusicplayer.SearchableActivity$DemoArrayAdapter -> com.michaelxie.youtubemusicplayer.b:
     android.view.LayoutInflater inflater -> b
     com.michaelxie.youtubemusicplayer.SearchableActivity this$0 -> a
@@ -3691,7 +3702,8 @@ com.michaelxie.youtubemusicplayer.SearchableActivity$DemoArrayAdapter -> com.mic
 com.michaelxie.youtubemusicplayer.SearchableActivity$searchTask -> com.michaelxie.youtubemusicplayer.c:
     java.util.List tempList -> a
     com.michaelxie.youtubemusicplayer.SearchableActivity activity -> b
-    com.michaelxie.youtubemusicplayer.SearchableActivity this$0 -> c
+    int numResults -> c
+    com.michaelxie.youtubemusicplayer.SearchableActivity this$0 -> d
     java.util.List doInBackground(java.lang.String[]) -> a
     void onPostExecute(java.util.List) -> a
     void onPostExecute(java.lang.Object) -> onPostExecute
@@ -3705,6 +3717,13 @@ com.michaelxie.youtubemusicplayer.SearchableActivity$videoResultItem -> com.mich
     com.michaelxie.youtubemusicplayer.SearchableActivity this$0 -> c
     java.lang.String getId() -> a
     java.lang.String getTitle() -> b
+com.michaelxie.youtubemusicplayer.VideoLoader -> com.michaelxie.youtubemusicplayer.f:
+    int width -> a
+    int height -> b
+    java.lang.String itemName -> c
+    android.webkit.WebView wv -> d
+    void loadVideo() -> a
+    void run() -> run
 com.michaelxie.youtubemusicplayer.YouTubeFailureRecoveryActivity -> com.michaelxie.youtubemusicplayer.YouTubeFailureRecoveryActivity:
     void onActivityResult(int,int,android.content.Intent) -> onActivityResult
     com.google.android.youtube.player.YouTubePlayer$Provider getYouTubePlayerProvider() -> a
