@@ -7,7 +7,7 @@
     <uses-sdk
         android:minSdkVersion="11"
         android:targetSdkVersion="19" />
-
+  
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -17,7 +17,11 @@
         android:icon="@drawable/yt_icon_base"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" 
-        android:hardwareAccelerated="true"  >
+        android:hardwareAccelerated="true"  
+        > 
+        <meta-data android:name="com.google.android.gms.version"
+           android:value="@integer/google_play_services_version" />
+        
         <activity
             android:name="com.michaelxie.youtubemusicplayer.MainActivity"
             android:label="@string/app_name" >
@@ -47,8 +51,16 @@
                 android:value="android.app.ListActivity"
                  />
         </activity>
+        
+    <activity android:name="com.google.android.gms.ads.AdActivity"
+             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"/>
+ 
+
         <meta-data android:name="android.app.default_searchable"
                    android:value=".SearchableActivity" />
+        
+   
     </application>
+    	
 
 </manifest>

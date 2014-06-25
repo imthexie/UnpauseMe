@@ -16,23 +16,9 @@
 
 package com.michaelxie.youtubemusicplayer;
 
-import com.michaelxie.youtubemusicplayer.R;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
-
-
-
-
-
-
-
-
-
-
-
-import android.text.format.Time;
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.View;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 //import android.app.Activity;
@@ -41,13 +27,15 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
-import android.webkit.WebSettings.PluginState;
 import android.webkit.WebView;
-import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.MediaController.MediaPlayerControl;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
@@ -92,23 +80,29 @@ public class PlayActivity extends Activity{//extends YouTubeFailureRecoveryActiv
 	private WebView wv;
 	private VideoView video;
 	Thread videoThread;
+	private TextView tv;
 	private myWebChromeClient chromeClient = new myWebChromeClient();
   @SuppressLint("SetJavaScriptEnabled")
 @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.playerview);
- 
+    
     wv = (WebView) findViewById(R.id.webview);
-  
+    AdView adView = (AdView)this.findViewById(R.id.adView);
+    AdRequest adRequest = new AdRequest.Builder().build();
+    adView.loadAd(adRequest);
+    
 	String oldId = id;
-	 if(oldId != null) Log.i("PLAYACTIVITYONCREATE", oldId);
+	if(oldId != null) Log.i("PLAYACTIVITYONCREATE", oldId);
 	id = getIntent().getExtras().getString("id");
 	  Log.i("PLAYACTIVITYONCREATE", id);
 	if( oldId == null || (!oldId.equals("curr") && !oldId.equals(id))) {	
 		  setUpVideo();
 	}       
-	
+	tv = (TextView) findViewById(R.id.descriptionView);
+    tv.setText(getIntent().getExtras().getString("desc"));
+    tv.setMovementMethod(new ScrollingMovementMethod());
 	
   }
   

@@ -1,12 +1,18 @@
-# view AndroidManifest.xml #generated:21
+# view AndroidManifest.xml #generated:55
+-keep class com.google.android.gms.ads.AdActivity { <init>(...); }
+
+# view res/layout/playerview.xml #generated:71
+-keep class com.google.android.gms.ads.AdView { <init>(...); }
+
+# view AndroidManifest.xml #generated:25
 -keep class com.michaelxie.youtubemusicplayer.MainActivity { <init>(...); }
 
-# view AndroidManifest.xml #generated:31
+# view AndroidManifest.xml #generated:35
 -keep class com.michaelxie.youtubemusicplayer.PlayActivity { <init>(...); }
 
-# view AndroidManifest.xml #generated:36
+# view AndroidManifest.xml #generated:40
 -keep class com.michaelxie.youtubemusicplayer.SearchableActivity { <init>(...); }
 
-# view AndroidManifest.xml #generated:34
+# view AndroidManifest.xml #generated:38
 -keep class com.michaelxie.youtubemusicplayer.YouTubeFailureRecoveryActivity { <init>(...); }
 

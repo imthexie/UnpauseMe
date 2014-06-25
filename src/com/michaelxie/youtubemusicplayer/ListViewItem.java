@@ -16,6 +16,8 @@
 
 package com.michaelxie.youtubemusicplayer;
 
+import com.michaelxie.youtubemusicplayer.SearchableActivity.DemoArrayAdapter;
+
 /**
  * A single list view item for use with {@link DemoArrayAdapter}.
  */

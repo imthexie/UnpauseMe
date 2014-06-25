@@ -1,28 +1,26 @@
 package com.michaelxie.youtubemusicplayer;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.os.AsyncTask;
-import android.os.Bundle;
 import android.app.ListActivity;
 import android.app.SearchManager;
 import android.content.ActivityNotFoundException;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.util.Log;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,12 +28,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.support.v4.app.NavUtils;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
@@ -44,7 +42,6 @@ import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
-import com.google.api.client.util.Lists;
 //import com.google.api.client.util.ExponentialBackOff;
 import com.google.api.services.youtube.YouTube;
 //import com.google.api.services.youtube.model.ChannelListResponse;
@@ -100,6 +97,7 @@ public class SearchableActivity extends ListActivity implements OnItemClickListe
 			intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 			intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 			intent.putExtra("id", clickedItem.getId());
+			intent.putExtra("desc", clickedItem.getDesc());
 			startActivity(intent);		
 		}
 		catch(ActivityNotFoundException e) {
@@ -125,19 +123,31 @@ public class SearchableActivity extends ListActivity implements OnItemClickListe
 			try {
 				// Define the API request for retrieving search results.
 		        YouTube.Search.List searchRequest = youtube.search().list("id,snippet");
+		        
 		        searchRequest.setKey(DeveloperKey.DEVELOPER_KEY);
 		        searchRequest.setQ(query[0]);
 		        searchRequest.setType("video");
-		        searchRequest.setMaxResults((long) numResults);
-		        searchRequest.setFields("items(id/kind,id/videoId,snippet/title,snippet/thumbnails/default/url)");
+		        searchRequest.setVideoEmbeddable("true"); //Since using WebView embed. Many songs cannot be embedded
+		        searchRequest.setVideoSyndicated("true");
+		        searchRequest.setMaxResults((long) numResults); //25 - 50 for now
+		        searchRequest.setFields("items(id/kind,id/videoId, snippet/title, snippet/description, snippet/thumbnails/default/url)");
 		        SearchListResponse searchResponse = searchRequest.execute();
 		        List<SearchResult> list = searchResponse.getItems();
+		        
+		        
+		        /*Channel Request for the channel name
+		        YouTube.Channels.List channelRequest = youtube.channels().list();
+		        channelRequest.setPart("id");
+		        */
 		        for(int i = 0; i < list.size(); i++) {
 		        	JSONObject resultSnippet = new JSONObject(list.get(i).getSnippet());
 		        	try {
-		        		videoResultItem item = new videoResultItem(resultSnippet.getString("title"), list.get(i).getId().getVideoId());
+		        		String thumbnailText = resultSnippet.getString("thumbnails");
+		        		thumbnailText = thumbnailText.substring(thumbnailText.indexOf("\"url\"") + 7, thumbnailText.lastIndexOf("\""));
+		        		videoResultItem item = new videoResultItem(resultSnippet.getString("title"), 
+		        				list.get(i).getId().getVideoId(), resultSnippet.getString("description"), thumbnailText);
+		        		
 		        		tempList.add(item);	
-		        		//System.out.println(item.getTitle());
 		        	} catch(JSONException e) {
 		        		System.err.println("JSONException");
 		        	}
@@ -203,19 +213,13 @@ public class SearchableActivity extends ListActivity implements OnItemClickListe
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case android.R.id.home:
-			// This ID represents the Home or Up button. In the case of this
-			// activity, the Up button is shown. Use NavUtils to allow users
-			// to navigate up one level in the application structure. For
-			// more details, see the Navigation pattern on Android Design:
-			//
-			// http://developer.android.com/design/patterns/navigation.html#up-vs-back
-			//
+		int itemId = item.getItemId();
+		if (itemId == android.R.id.home) {
 			NavUtils.navigateUpFromSameTask(this);
 			return true;
-		case R.id.action_search: onSearchRequested(); return true;
-	    	
+		} else if (itemId == R.id.action_search) {
+			onSearchRequested();
+			return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -223,26 +227,42 @@ public class SearchableActivity extends ListActivity implements OnItemClickListe
 	private final class videoResultItem implements ListViewItem {
 		String title;
 		String ID;
-		public videoResultItem(String title1, String ID1) {
+		String description;
+		String channel;
+		String thumbnailUrl;
+		public videoResultItem(String title1, String ID1, String description1, String thumbnailUrl1) {
 			title = title1;
 			ID = ID1;
+			description = description1;
+			thumbnailUrl = thumbnailUrl1;
+			//channel = channel1;
+		}
+		public String getDesc() {
+			return description;
+		}
+		public String getChannel() {
+			return channel;
 		}
 		public String getId() {
 			return ID;
 		}
-		
 		public String getTitle() {
 			return title;
 		}
+		public String getThumbnailUrl() {
+			return thumbnailUrl;
+		}
+		
 	}
-	
+
 	/**
-	 * A convenience class to make ListViews easier to use in the demo activities.
+	 * A convenience class to make ListView 
 	 */
 	public final class DemoArrayAdapter extends ArrayAdapter<videoResultItem> {
 
 	  private final LayoutInflater inflater;
-
+	  ArrayList<Thread> threads;
+	  ArrayList<Bitmap> bitmaps;
 	  public DemoArrayAdapter(Context context, int textViewResourceId, List<videoResultItem> objects) {
 	    super(context, textViewResourceId, objects);
 	    inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -255,8 +275,63 @@ public class SearchableActivity extends ListActivity implements OnItemClickListe
 	    }
 	    TextView textView = (TextView) view.findViewById(R.id.list_item_text);
 	    textView.setText(getItem(position).getTitle());
+	    
+	    /*ThumbnailLoader thumbLoader = new ThumbnailLoader(getItem(position).getThumbnailUrl(), threads.size());
+		Thread thumbThread = new Thread(thumbLoader);
+		threads.add(thumbThread);
+		bitmaps.add(null);
+		thumbThread.start();
+	    waitForLoaders(view); //Not supposed to be put here
+	    */
 	    return view;
 	  }
+	  
+	  private void waitForLoaders(View view) {
+		  for(int i = 0; i < threads.size(); i++) {
+			  try {
+				threads.get(i).join();
+				ImageView imageView = (ImageView) view.findViewById(R.id.imageView1);
+				if(bitmaps.get(i) != null) imageView.setImageBitmap(bitmaps.get(i));
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		  }
+	  }
+	  
+	  class ThumbnailLoader implements Runnable {
+		  String urlString;
+		  int position;
+		  public ThumbnailLoader(String url1, int pos) {
+			  urlString = url1;
+			  position = pos;
+		  }
+		@Override
+		public void run() {
+			URL url = null;
+			try {
+				url = new URL(urlString);
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			}
+		    if(url != null) {
+		    	Bitmap bmp = null;
+		    
+				try {
+					bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+					bitmaps.add(position, bmp);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+		    }
+			
+		}
+		  
+		  
+		  
+		  
+	  
+	  }
+		
 
 	}
 

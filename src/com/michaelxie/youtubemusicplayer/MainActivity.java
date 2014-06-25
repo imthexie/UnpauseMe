@@ -1,40 +1,10 @@
 package com.michaelxie.youtubemusicplayer;
 
-import java.io.IOException;
 
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.impl.client.DefaultHttpClient;
-
-import com.michaelxie.youtubemusicplayer.R;
-import com.google.android.youtube.player.YouTubeIntents;
-
-import android.app.ActionBar;
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
-import android.content.ClipData.Item;
-import android.content.ComponentName;
-import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
-import android.text.method.KeyListener;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.SearchView;
-import android.widget.TextView;
 
 
 
