@@ -6,23 +6,32 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".MainActivity" >
-
+    tools:context=".MainActivity" 
+    android:background = "@color/white">
+ 
     <ImageView
         android:id="@+id/imageView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="105dp"
-        android:src="@drawable/home2" />
+        android:layout_marginTop="107dp"
+        android:src="@drawable/unpausemehome" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imageView1"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/ytmp_home" />
 
     <TextView
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/imageView1"
-        android:layout_alignRight="@+id/imageView1"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/imageView1"
         android:text="Beta"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 

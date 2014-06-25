@@ -7,6 +7,6 @@
     <string name="search_hint">Search YouTube</string>
     <string name="title_activity_searchable">Search</string>
     <string name="helpful1">Use your Power Button to start playing music!</string>
-
+	<color name="white">#FFFFFF</color>
 
 </resources>

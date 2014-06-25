@@ -8,7 +8,7 @@
     <TextView
         android:id="@+id/list_item_text"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="70dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/imageView1"
@@ -17,8 +17,8 @@
 
     <ImageView
         android:id="@+id/imageView1"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:layout_alignBottom="@+id/list_item_text"
         android:layout_alignParentLeft="true"
         android:layout_alignTop="@+id/list_item_text"
