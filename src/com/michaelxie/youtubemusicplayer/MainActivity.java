@@ -1,6 +1,9 @@
 package com.michaelxie.youtubemusicplayer;
 
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -14,6 +17,9 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		 AdView adView = (AdView)this.findViewById(R.id.adView2);
+		    AdRequest adRequest = new AdRequest.Builder().build();
+		    adView.loadAd(adRequest);
 		//ActionBar actionbar = getActionBar();
 		
 		//button1 = (Button) findViewById(R.id.button1);

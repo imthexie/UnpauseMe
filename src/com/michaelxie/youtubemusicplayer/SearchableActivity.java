@@ -35,6 +35,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.http.HttpRequest;
@@ -57,7 +59,8 @@ import com.google.api.services.youtube.model.SearchResult;
 public class SearchableActivity extends ListActivity implements OnItemClickListener, OnScrollListener{
 
 	private static final String TAG = "SEARCHABLE";
-	
+	ImageView nowPlaying;
+	Drawable nowPlayingDrawable;
 	final HttpTransport transport = AndroidHttp.newCompatibleTransport();
 	final JsonFactory jsonFactory = new GsonFactory();
 	//public String URL = "https://www.googleapis.com/youtube/v3/videos?search?&key=AIzaSyAo02NXZkIw_veXM_qT73A1s5so5I0UOKY&part=snippet,statistics&type=video&q="; 
@@ -70,9 +73,13 @@ public class SearchableActivity extends ListActivity implements OnItemClickListe
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_searchable); 
 		setupActionBar(); // Show the Up button in the action bar.
+		AdView adView = (AdView)this.findViewById(R.id.adView1);
+		AdRequest adRequest = new AdRequest.Builder().build();
+		 adView.loadAd(adRequest);
 		resultList = new ArrayList<videoResultItem>();
 		numResults = 25;
 		handleIntent(getIntent());
+		nowPlayingDrawable = getResources().getDrawable(R.drawable.ic_media_now_playing);
 	}
 	
 	@Override
@@ -88,14 +95,19 @@ public class SearchableActivity extends ListActivity implements OnItemClickListe
 	      search(query, numResults);
 	    }   
 	}
-	
+	 
 	@Override
 	  public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 	    videoResultItem clickedItem = (videoResultItem) resultList.get(position);
+	    if(nowPlaying != null) {
+	    		nowPlaying.setImageDrawable(getResources().getDrawable(R.drawable.ic_media_play));
+	    }
+	    nowPlaying = (ImageView) view.findViewById(R.id.imageView1);
+	    nowPlaying.setImageDrawable(nowPlayingDrawable);
 	    Intent intent = new Intent(this, PlayActivity.class);
 		try {
 			intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-			intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+			//intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 			intent.putExtra("id", clickedItem.getId());
 			intent.putExtra("desc", clickedItem.getDesc());
 			startActivity(intent);		

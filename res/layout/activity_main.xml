@@ -1,4 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:ads="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,7 +11,7 @@
     android:background = "@color/white">
  
     <ImageView
-        android:id="@+id/imageView1"
+        android:id="@+id/imageView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -18,12 +19,24 @@
         android:layout_marginTop="107dp"
         android:src="@drawable/unpausemehome" />
 
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/adView2"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        ads:adSize="BANNER"
+        ads:adUnitId="ca-app-pub-3329167849236973/3266837040"  >
+
+    </com.google.android.gms.ads.AdView>
+
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/imageView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/imageView1"
-        android:layout_centerHorizontal="true"
+         android:layout_centerHorizontal="true"
+        android:layout_below="@+id/imageView2"
         android:src="@drawable/ytmp_home" />
 
     <TextView
@@ -31,7 +44,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_alignTop="@+id/imageView1"
+        android:layout_alignTop="@+id/imageView2"
         android:text="Beta"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 

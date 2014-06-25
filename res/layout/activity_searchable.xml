@@ -1,17 +1,29 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:ads="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
     tools:context=".SearchableActivity" >
 
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/adView1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        ads:adSize="BANNER"
+        ads:adUnitId="ca-app-pub-3329167849236973/3266837040"  >
+    </com.google.android.gms.ads.AdView>
+
     <ListView
         android:id="@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_above="@+id/adView1"
+        android:layout_alignParentLeft="true"
         android:divider="#1111"
-        android:dividerHeight="10dp" />
-    
-    
+        android:dividerHeight="10dp" >
+    </ListView>
 
 </RelativeLayout>

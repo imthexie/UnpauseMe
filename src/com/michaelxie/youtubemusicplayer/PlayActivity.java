@@ -39,7 +39,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
-class VideoLoader implements Runnable {
+/*class VideoLoader implements Runnable {
 	int width, height; 
 	String itemName;
 	WebView wv;
@@ -68,11 +68,10 @@ class VideoLoader implements Runnable {
 
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
 		loadVideo();
 	}
 	
-}
+}*/
 
 public class PlayActivity extends Activity{//extends YouTubeFailureRecoveryActivity implements View.OnClickListener{
 	private String id;
@@ -87,7 +86,7 @@ public class PlayActivity extends Activity{//extends YouTubeFailureRecoveryActiv
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.playerview);
-    
+    setupActionBar(); // Show the Up button in the action bar.
     wv = (WebView) findViewById(R.id.webview);
     AdView adView = (AdView)this.findViewById(R.id.adView);
     AdRequest adRequest = new AdRequest.Builder().build();
@@ -106,6 +105,9 @@ public class PlayActivity extends Activity{//extends YouTubeFailureRecoveryActiv
 	
   }
   
+  private void setupActionBar() {
+		getActionBar().setDisplayHomeAsUpEnabled(true);
+	}
   @Override
   protected void onNewIntent(Intent intent) {
 	  String oldId = id;
@@ -127,19 +129,19 @@ public class PlayActivity extends Activity{//extends YouTubeFailureRecoveryActiv
 	    wv.getSettings().setPluginState(WebSettings.PluginState.ON);
 	    wv.setHorizontalScrollBarEnabled(false);
 	    wv.setVerticalScrollBarEnabled(false);
-	    VideoLoader vl = new VideoLoader(wv, w1, h1, item);
-	    if(videoThread != null) {
-	    	videoThread.stop();
-	    	try {
-				videoThread.join();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+	    try {
+	        wv.loadDataWithBaseURL("",
+	        "<html><body><iframe class=\"youtube-player\" type=\"text/html5\" width=\""
+	        + (w1 - 20)
+	        + "\" height=\""
+	        + h1
+	        + "\" src=\""
+	        + item
+	        + "\" frameborder=\"0\"\"controls onclick=\"this.play()\">\n</iframe></body></html>",
+	                                "text/html", "UTF-8", "");
+	    } catch (Exception e) {
+	        e.printStackTrace();
 	    }
-	    
-	    videoThread = new Thread(vl);
-	    videoThread.start();
   }
   
   private class myWebChromeClient extends WebChromeClient implements OnCompletionListener {

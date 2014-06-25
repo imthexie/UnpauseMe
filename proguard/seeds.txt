@@ -1658,6 +1658,8 @@ com.michaelxie.youtubemusicplayer.R$drawable: int home
 com.michaelxie.youtubemusicplayer.R$drawable: int home2
 com.michaelxie.youtubemusicplayer.R$drawable: int ic_action_search
 com.michaelxie.youtubemusicplayer.R$drawable: int ic_launcher
+com.michaelxie.youtubemusicplayer.R$drawable: int ic_media_now_playing
+com.michaelxie.youtubemusicplayer.R$drawable: int ic_media_play
 com.michaelxie.youtubemusicplayer.R$drawable: int ic_plusone_medium_off_client
 com.michaelxie.youtubemusicplayer.R$drawable: int ic_plusone_small_off_client
 com.michaelxie.youtubemusicplayer.R$drawable: int ic_plusone_standard_off_client
@@ -1672,6 +1674,8 @@ com.michaelxie.youtubemusicplayer.R$id: int RelativeLayout1
 com.michaelxie.youtubemusicplayer.R$id: int action_search
 com.michaelxie.youtubemusicplayer.R$id: int action_settings
 com.michaelxie.youtubemusicplayer.R$id: int adView
+com.michaelxie.youtubemusicplayer.R$id: int adView1
+com.michaelxie.youtubemusicplayer.R$id: int adView2
 com.michaelxie.youtubemusicplayer.R$id: int book_now
 com.michaelxie.youtubemusicplayer.R$id: int buyButton
 com.michaelxie.youtubemusicplayer.R$id: int buy_now
@@ -1684,6 +1688,7 @@ com.michaelxie.youtubemusicplayer.R$id: int holo_light
 com.michaelxie.youtubemusicplayer.R$id: int hybrid
 com.michaelxie.youtubemusicplayer.R$id: int imageView1
 com.michaelxie.youtubemusicplayer.R$id: int imageView2
+com.michaelxie.youtubemusicplayer.R$id: int imageView3
 com.michaelxie.youtubemusicplayer.R$id: int list_item_text
 com.michaelxie.youtubemusicplayer.R$id: int match_parent
 com.michaelxie.youtubemusicplayer.R$id: int monochrome
