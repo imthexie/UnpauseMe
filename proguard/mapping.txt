@@ -10358,44 +10358,57 @@ com.michaelxie.youtubemusicplayer.MainActivity -> com.michaelxie.youtubemusicpla
     boolean onCreateOptionsMenu(android.view.Menu) -> onCreateOptionsMenu
     boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
 com.michaelxie.youtubemusicplayer.PlayActivity -> com.michaelxie.youtubemusicplayer.PlayActivity:
-    java.lang.String id -> b
-    java.lang.String embed_url -> c
-    android.webkit.WebView wv -> d
-    android.widget.VideoView video -> e
-    java.lang.Thread videoThread -> a
-    android.widget.TextView tv -> f
-    com.michaelxie.youtubemusicplayer.PlayActivity$myWebChromeClient chromeClient -> g
+    java.lang.String id -> a
+    java.lang.String embed_url -> b
+    android.webkit.WebView wv -> c
+    android.widget.TextView tv -> d
+    com.michaelxie.youtubemusicplayer.PlayActivity$myWebChromeClient chromeClient -> e
+    android.view.View mCustomView -> f
+    android.widget.RelativeLayout mContentView -> g
+    android.widget.FrameLayout mCustomViewContainer -> h
+    android.webkit.WebChromeClient$CustomViewCallback mCustomViewCallback -> i
     void onCreate(android.os.Bundle) -> onCreate
     void setupActionBar() -> a
+    boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
     void onNewIntent(android.content.Intent) -> onNewIntent
     void setUpVideo() -> b
     void onResume() -> onResume
     void onPause() -> onPause
+    void onBackPressed() -> onBackPressed
     void tToast(java.lang.String) -> a
-    void access$0(com.michaelxie.youtubemusicplayer.PlayActivity,android.widget.VideoView) -> a
-    android.widget.VideoView access$1(com.michaelxie.youtubemusicplayer.PlayActivity) -> a
-    void access$2(com.michaelxie.youtubemusicplayer.PlayActivity,java.lang.String) -> a
+    void access$0(com.michaelxie.youtubemusicplayer.PlayActivity,java.lang.String) -> a
+    android.view.View access$1(com.michaelxie.youtubemusicplayer.PlayActivity) -> a
+    android.widget.FrameLayout access$2(com.michaelxie.youtubemusicplayer.PlayActivity) -> b
+    void access$3(com.michaelxie.youtubemusicplayer.PlayActivity,android.view.View) -> a
+    android.webkit.WebChromeClient$CustomViewCallback access$4(com.michaelxie.youtubemusicplayer.PlayActivity) -> c
+    android.widget.RelativeLayout access$5(com.michaelxie.youtubemusicplayer.PlayActivity) -> d
 com.michaelxie.youtubemusicplayer.PlayActivity$myWebChromeClient -> com.michaelxie.youtubemusicplayer.a:
-    com.michaelxie.youtubemusicplayer.PlayActivity this$0 -> a
+    android.widget.FrameLayout$LayoutParams LayoutParameters -> a
+    com.michaelxie.youtubemusicplayer.PlayActivity this$0 -> b
     void onShowCustomView(android.view.View,android.webkit.WebChromeClient$CustomViewCallback) -> onShowCustomView
+    void onHideCustomView() -> onHideCustomView
     void onCompletion(android.media.MediaPlayer) -> onCompletion
 com.michaelxie.youtubemusicplayer.SearchableActivity -> com.michaelxie.youtubemusicplayer.SearchableActivity:
     android.widget.ImageView nowPlaying -> a
     android.graphics.drawable.Drawable nowPlayingDrawable -> b
-    com.google.api.client.http.HttpTransport transport -> c
-    com.google.api.client.json.JsonFactory jsonFactory -> d
-    android.widget.ListView listView -> e
-    java.util.List resultList -> f
-    java.lang.String query -> g
-    int numResults -> h
+    java.lang.String nowPlayingId -> c
+    java.lang.String nowPlayingDesc -> d
+    com.google.api.client.http.HttpTransport transport -> e
+    com.google.api.client.json.JsonFactory jsonFactory -> f
+    android.widget.ListView listView -> g
+    java.util.List resultList -> h
+    java.lang.String query -> i
+    int numResults -> j
     void onCreate(android.os.Bundle) -> onCreate
     void onNewIntent(android.content.Intent) -> onNewIntent
     void handleIntent(android.content.Intent) -> a
+    void onBackPressed() -> onBackPressed
     void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
     void search(java.lang.String,int) -> a
     void onScroll(android.widget.AbsListView,int,int,int) -> onScroll
     void setupActionBar() -> a
     boolean onCreateOptionsMenu(android.view.Menu) -> onCreateOptionsMenu
+    void tToast(java.lang.String) -> a
     boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
     void onScrollStateChanged(android.widget.AbsListView,int) -> onScrollStateChanged
 com.michaelxie.youtubemusicplayer.SearchableActivity$DemoArrayAdapter -> com.michaelxie.youtubemusicplayer.b:

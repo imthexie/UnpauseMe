@@ -1671,6 +1671,7 @@ com.michaelxie.youtubemusicplayer.R$drawable: int yt_icon_base
 com.michaelxie.youtubemusicplayer.R$drawable: int yt_icon_small
 com.michaelxie.youtubemusicplayer.R$drawable: int ytmp_home
 com.michaelxie.youtubemusicplayer.R$id: int RelativeLayout1
+com.michaelxie.youtubemusicplayer.R$id: int action_now_playing
 com.michaelxie.youtubemusicplayer.R$id: int action_search
 com.michaelxie.youtubemusicplayer.R$id: int action_settings
 com.michaelxie.youtubemusicplayer.R$id: int adView
@@ -1747,6 +1748,7 @@ com.michaelxie.youtubemusicplayer.R$string: int common_signin_button_text
 com.michaelxie.youtubemusicplayer.R$string: int common_signin_button_text_long
 com.michaelxie.youtubemusicplayer.R$string: int error_player
 com.michaelxie.youtubemusicplayer.R$string: int helpful1
+com.michaelxie.youtubemusicplayer.R$string: int now_playing
 com.michaelxie.youtubemusicplayer.R$string: int search_hint
 com.michaelxie.youtubemusicplayer.R$string: int title_activity_searchable
 com.michaelxie.youtubemusicplayer.R$string: int wallet_buy_button_place_holder

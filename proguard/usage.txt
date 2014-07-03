@@ -5855,6 +5855,8 @@ com.michaelxie.youtubemusicplayer.BuildConfig
 com.michaelxie.youtubemusicplayer.DeveloperKey
 com.michaelxie.youtubemusicplayer.FragmentActivity
 com.michaelxie.youtubemusicplayer.ListViewItem
+com.michaelxie.youtubemusicplayer.PlayActivity:
+    private android.widget.VideoView video
 com.michaelxie.youtubemusicplayer.R
 com.michaelxie.youtubemusicplayer.R$attr
 com.michaelxie.youtubemusicplayer.R$color
@@ -5872,12 +5874,12 @@ com.michaelxie.youtubemusicplayer.SearchableActivity:
 com.michaelxie.youtubemusicplayer.SearchableActivity$DemoArrayAdapter:
     java.util.ArrayList threads
     java.util.ArrayList bitmaps
-    302:311:private void waitForLoaders(android.view.View)
+    340:349:private void waitForLoaders(android.view.View)
 com.michaelxie.youtubemusicplayer.SearchableActivity$DemoArrayAdapter$ThumbnailLoader
 com.michaelxie.youtubemusicplayer.SearchableActivity$videoResultItem:
     java.lang.String channel
-    256:256:public java.lang.String getChannel()
-    265:265:public java.lang.String getThumbnailUrl()
+    294:294:public java.lang.String getChannel()
+    303:303:public java.lang.String getThumbnailUrl()
 com.michaelxie.youtubemusicplayer.YouTubeFailureRecoveryActivity:
     private static final int RECOVERY_DIALOG_REQUEST
     38:44:public void onInitializationFailure(com.google.android.youtube.player.YouTubePlayer$Provider,com.google.android.youtube.player.YouTubeInitializationResult)

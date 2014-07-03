@@ -18,11 +18,13 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +36,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -61,6 +64,7 @@ public class SearchableActivity extends ListActivity implements OnItemClickListe
 	private static final String TAG = "SEARCHABLE";
 	ImageView nowPlaying;
 	Drawable nowPlayingDrawable;
+	String nowPlayingId, nowPlayingDesc;
 	final HttpTransport transport = AndroidHttp.newCompatibleTransport();
 	final JsonFactory jsonFactory = new GsonFactory();
 	//public String URL = "https://www.googleapis.com/youtube/v3/videos?search?&key=AIzaSyAo02NXZkIw_veXM_qT73A1s5so5I0UOKY&part=snippet,statistics&type=video&q="; 
@@ -97,6 +101,20 @@ public class SearchableActivity extends ListActivity implements OnItemClickListe
 	}
 	 
 	@Override
+	public void onBackPressed() {
+		if(nowPlayingId != null) {
+			Intent intent = new Intent(this, PlayActivity.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+			intent.putExtra("id", nowPlayingId);
+			intent.putExtra("desc", nowPlayingDesc);
+			startActivity(intent);		
+		} else {
+			super.onBackPressed();
+		}
+	    	
+	}
+	
+	@Override
 	  public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 	    videoResultItem clickedItem = (videoResultItem) resultList.get(position);
 	    if(nowPlaying != null) {
@@ -104,12 +122,14 @@ public class SearchableActivity extends ListActivity implements OnItemClickListe
 	    }
 	    nowPlaying = (ImageView) view.findViewById(R.id.imageView1);
 	    nowPlaying.setImageDrawable(nowPlayingDrawable);
+	    
 	    Intent intent = new Intent(this, PlayActivity.class);
 		try {
 			intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-			//intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-			intent.putExtra("id", clickedItem.getId());
-			intent.putExtra("desc", clickedItem.getDesc());
+			nowPlayingId = clickedItem.getId();
+			nowPlayingDesc = clickedItem.getDesc();
+			intent.putExtra("id", nowPlayingId);
+			intent.putExtra("desc", nowPlayingDesc);
 			startActivity(intent);		
 		}
 		catch(ActivityNotFoundException e) {
@@ -219,8 +239,16 @@ public class SearchableActivity extends ListActivity implements OnItemClickListe
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
+		MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.searchable, menu); 
+	    
 		return true;
+	}
+	private void tToast(String s) {
+	    Context context = getApplicationContext();
+	    int duration = Toast.LENGTH_SHORT;
+	    Toast toast = Toast.makeText(context, s, duration);
+	    toast.show();
 	}
 
 	@Override
@@ -232,6 +260,16 @@ public class SearchableActivity extends ListActivity implements OnItemClickListe
 		} else if (itemId == R.id.action_search) {
 			onSearchRequested();
 			return true;
+		} else if (itemId == R.id.action_now_playing){
+			if(nowPlayingId != null) {
+				Intent intent = new Intent(this, PlayActivity.class);
+				intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+				intent.putExtra("id", nowPlayingId);
+				intent.putExtra("desc", nowPlayingDesc);
+				startActivity(intent);	
+			} else {
+				tToast("Nothing playing right now.");
+			}
 		}
 		return super.onOptionsItemSelected(item);
 	}

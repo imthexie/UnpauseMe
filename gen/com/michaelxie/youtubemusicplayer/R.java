@@ -417,6 +417,7 @@ containing a value of this type.
     }
     public static final class id {
         public static final int RelativeLayout1=0x7f06001b;
+        public static final int action_now_playing=0x7f060021;
         public static final int action_search=0x7f06001f;
         public static final int action_settings=0x7f060020;
         public static final int adView=0x7f06001d;
@@ -563,10 +564,11 @@ containing a value of this type.
         /**  Long form sign-in button text [CHAR LIMIT=30] 
          */
         public static final int common_signin_button_text_long=0x7f04001e;
-        public static final int error_player=0x7f040022;
-        public static final int helpful1=0x7f040025;
-        public static final int search_hint=0x7f040023;
-        public static final int title_activity_searchable=0x7f040024;
+        public static final int error_player=0x7f040023;
+        public static final int helpful1=0x7f040026;
+        public static final int now_playing=0x7f040022;
+        public static final int search_hint=0x7f040024;
+        public static final int title_activity_searchable=0x7f040025;
         /**  Text on a placeholder buy button when Google Play services is not
          available or up-to-date 
          */

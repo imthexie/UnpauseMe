@@ -101,6 +101,7 @@ int drawable yt_icon_base 0x7f020025
 int drawable yt_icon_small 0x7f020026
 int drawable ytmp_home 0x7f020027
 int id RelativeLayout1 0x7f06001b
+int id action_now_playing 0x7f060021
 int id action_search 0x7f06001f
 int id action_settings 0x7f060020
 int id adView 0x7f06001d
@@ -175,10 +176,11 @@ int string common_google_play_services_update_text 0x7f040013
 int string common_google_play_services_update_title 0x7f040012
 int string common_signin_button_text 0x7f04001d
 int string common_signin_button_text_long 0x7f04001e
-int string error_player 0x7f040022
-int string helpful1 0x7f040025
-int string search_hint 0x7f040023
-int string title_activity_searchable 0x7f040024
+int string error_player 0x7f040023
+int string helpful1 0x7f040026
+int string now_playing 0x7f040022
+int string search_hint 0x7f040024
+int string title_activity_searchable 0x7f040025
 int string wallet_buy_button_place_holder 0x7f04001f
 int style AppBaseTheme 0x7f080004
 int style AppTheme 0x7f080005

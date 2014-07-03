@@ -21,66 +21,40 @@ import com.google.android.gms.ads.AdView;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-//import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
+import android.webkit.WebSettings.PluginState;
 import android.webkit.WebView;
 import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
-/*class VideoLoader implements Runnable {
-	int width, height; 
-	String itemName;
-	WebView wv;
-	
-	public VideoLoader(WebView view, int w1, int h1, String item) {
-		wv = view;
-		width = w1;
-		height = h1;
-		itemName = item;
-	}
-	public void loadVideo() {
-		  try {
-		        wv.loadDataWithBaseURL("",
-		        "<html><body><iframe class=\"youtube-player\" type=\"text/html5\" width=\""
-		        + (width - 20)
-		        + "\" height=\""
-		        + height
-		        + "\" src=\""
-		        + itemName
-		        + "\" frameborder=\"0\"\"controls onclick=\"this.play()\">\n</iframe></body></html>",
-		                                "text/html", "UTF-8", "");
-		    } catch (Exception e) {
-		        e.printStackTrace();
-		    }
-	  }   
-
-	@Override
-	public void run() {
-		loadVideo();
-	}
-	
-}*/
 
 public class PlayActivity extends Activity{//extends YouTubeFailureRecoveryActivity implements View.OnClickListener{
 	private String id;
 	private String embed_url = "http://www.youtube.com/embed/";
 	private WebView wv;
 	private VideoView video;
-	Thread videoThread;
 	private TextView tv;
-	private myWebChromeClient chromeClient = new myWebChromeClient();
+	private myWebChromeClient chromeClient = null;
+	private View mCustomView;
+	private RelativeLayout mContentView;
+	private FrameLayout mCustomViewContainer;
+	private WebChromeClient.CustomViewCallback mCustomViewCallback;
   @SuppressLint("SetJavaScriptEnabled")
 @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -88,6 +62,9 @@ public class PlayActivity extends Activity{//extends YouTubeFailureRecoveryActiv
     setContentView(R.layout.playerview);
     setupActionBar(); // Show the Up button in the action bar.
     wv = (WebView) findViewById(R.id.webview);
+    chromeClient = new myWebChromeClient();
+    wv.setWebChromeClient(chromeClient);
+    
     AdView adView = (AdView)this.findViewById(R.id.adView);
     AdRequest adRequest = new AdRequest.Builder().build();
     adView.loadAd(adRequest);
@@ -108,16 +85,31 @@ public class PlayActivity extends Activity{//extends YouTubeFailureRecoveryActiv
   private void setupActionBar() {
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 	}
+  
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+      switch (item.getItemId()) {
+          case android.R.id.home:
+        	  this.moveTaskToBack(true);
+              return true;
+          default:
+              return super.onOptionsItemSelected(item);
+      }
+  }
   @Override
   protected void onNewIntent(Intent intent) {
 	  String oldId = id;
-	 Log.i("PLAYACTIVITY", oldId);
+	  Log.i("PLAYACTIVITY", oldId);
 	  id = intent.getExtras().getString("id");
+	  setupActionBar();
+	  tv.setText(intent.getExtras().getString("desc"));
 	  if(oldId == null || (!oldId.equals("curr") && !oldId.equals(id))) {	
 		  setUpVideo();
+		  
 	  } 
 		
   }
+  
   
   private void setUpVideo() {
 	  String item = embed_url + id;
@@ -126,9 +118,11 @@ public class PlayActivity extends Activity{//extends YouTubeFailureRecoveryActiv
 	    
 	    wv.setWebChromeClient(chromeClient);
 	    wv.getSettings().setJavaScriptEnabled(true);
-	    wv.getSettings().setPluginState(WebSettings.PluginState.ON);
+	    wv.setPadding(0, 0, 0, 0);
+	    wv.getSettings().setPluginState(PluginState.OFF);
 	    wv.setHorizontalScrollBarEnabled(false);
 	    wv.setVerticalScrollBarEnabled(false);
+	    wv.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
 	    try {
 	        wv.loadDataWithBaseURL("",
 	        "<html><body><iframe class=\"youtube-player\" type=\"text/html5\" width=\""
@@ -145,9 +139,30 @@ public class PlayActivity extends Activity{//extends YouTubeFailureRecoveryActiv
   }
   
   private class myWebChromeClient extends WebChromeClient implements OnCompletionListener {
-
+	  FrameLayout.LayoutParams LayoutParameters = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
+	            FrameLayout.LayoutParams.MATCH_PARENT);
 	    @Override
 	    public void onShowCustomView(View view, CustomViewCallback callback) {
+	    	callback.onCustomViewHidden();
+	    	tToast("Sorry! Fullscreen is not available. Click the video twice to resume video.");
+	    	// if a view already exists then immediately terminate the new one
+	    	/*if (mCustomView != null) {
+	            callback.onCustomViewHidden();
+	            return;
+	        }
+	    	mContentView = (RelativeLayout) findViewById(R.id.RelativeLayout1);
+	        mContentView.setVisibility(View.GONE);
+	        mCustomViewContainer = new FrameLayout(PlayActivity.this);
+	        mCustomViewContainer.setLayoutParams(LayoutParameters);
+	        mCustomViewContainer.setBackgroundResource(android.R.color.black);
+	        view.setLayoutParams(LayoutParameters);
+	        mCustomViewContainer.addView(view);
+	        mCustomView = view;
+	        mCustomViewCallback = callback;
+	        mCustomViewContainer.setVisibility(View.VISIBLE);
+	        setContentView(mCustomViewContainer);
+	        */
+	    	/*
 	        super.onShowCustomView(view, callback);
 	        if (view instanceof FrameLayout) {
 	            FrameLayout frame = (FrameLayout) view;
@@ -157,19 +172,30 @@ public class PlayActivity extends Activity{//extends YouTubeFailureRecoveryActiv
 	                video.start();
 	                tToast("Got the video object");
 	            }
+	        }*/
+	    }
+	    @Override
+	    public void onHideCustomView() {
+	        if (mCustomView == null) {
+	            return;
+	        } else {
+	            // Hide the custom view.  
+	            mCustomView.setVisibility(View.GONE);
+	            // Remove the custom view from its container.  
+	            mCustomViewContainer.removeView(mCustomView);
+	            mCustomView = null;
+	            mCustomViewContainer.setVisibility(View.GONE);
+	            mCustomViewCallback.onCustomViewHidden();
+	            // Show the content view.  
+	            mContentView.setVisibility(View.VISIBLE);
+	            setContentView(mContentView);
 	        }
 	    }
-
+	    
 		@Override
 		public void onCompletion(MediaPlayer mp) {
-			// TODO Auto-generated method stub
-			videoThread.stop();
-			try {
-				videoThread.join();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			//Play looping
+			mp.start();
 		}
 	};
 	
@@ -181,8 +207,13 @@ public class PlayActivity extends Activity{//extends YouTubeFailureRecoveryActiv
 	
 	@Override
 	public void onPause() {
-		this.moveTaskToBack(true);
+		//this.moveTaskToBack(true);
 		super.onPause();
+	}
+	
+	@Override
+	public void onBackPressed() {
+	    	this.moveTaskToBack(true);
 	}
 	
   /*@Override
@@ -273,50 +304,6 @@ public class PlayActivity extends Activity{//extends YouTubeFailureRecoveryActiv
 	    toast.show();
 	}
 	
-	/*private final class MyPlaybackEventListener implements PlaybackEventListener {
-	    public boolean isPlaying = false;
-	    public int currMillis = 0;
-	    public Time updateTime = new Time();
-	    @Override
-	    public void onPlaying() {
-	    	currMillis = player.getCurrentTimeMillis();
-	    	isPlaying = true;
-	    	
-	    	tToast("playing");
-	    }
-
-	    @Override
-	    public void onBuffering(boolean isBuffering) {
-	    	//currMillis = player.getCurrentTimeMillis();
-	    }
-
-	    @Override
-	    public void onStopped() {
-	    	currMillis = player.getCurrentTimeMillis();
-	    	
-	    	//isPlaying = false;
-	    	//tToast("stopped");
-	    }
-
-	    @Override
-	    public void onPaused() {
-	    	//currMillis = player.getCurrentTimeMillis();
-	    	//tToast(""+currMillis);
-	    	//isPlaying = false;
-	    	//tToast("paused");
-	    }
-
-	    @Override
-	    public void onSeekTo(int endPositionMillis) {
-	    	currMillis = endPositionMillis;
-	    }
-	    
-	    public int updateSeek(Time now) {
-	    		updateTime = now;
-	    		return (int) (1000 * updateTime.toMillis(false) - 1000 * now.toMillis(false));
-	    }
-	  }
-	*/
 }
 
 
